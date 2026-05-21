@@ -1,1 +1,18 @@
 /.commandcode
+
+# Resultados de simulacao SUMO (arquivos enormes, gerados ao rodar)
+centro/results/
+sumo/results/
+
+# Outputs de comparacao (PNGs podem ser grandes)
+centro/output/*.png
+sumo/output/*.png
+
+# Rede otimizada To-Be (gerada pelo otimizar_rede.py)
+centro/quadrilatero_tobe.net.xml
+
+# Arquivos temporarios e backups
+*.alt.xml
+*.backup.xml
+*.tmp
+emissions_test.sumocfg

@@ -83,42 +83,11 @@ T_VERMELHO_TOTAL = 2.0  # all-red
 # Intervalo de otimização da Onda Verde (passos de simulação)
 ONDA_VERDE_INTERVALO = 300  # a cada 30s (step-length=0.1s)
 
-# IDs dos semáforos principais (gerados pelo netconvert)
-TLS_IDS = ['K1', 'K3', 'K5', 'K7', 'X1', 'X2', 'X3', 'X4', 'F1', 'F3', 'F5', 'F7']
+# IDs dos semáforos - serao detectados dinamicamente ao conectar
+TLS_IDS = []
 
-# Agrupamento para Onda Verde: semáforos em sequência no mesmo eixo
-ONDA_VERDE_GRUPOS = {
-    'kennedy_norte_sul': {
-        'tls_ids': ['K1', 'K3', 'K5', 'K7'],
-        'edges_norte_sul': ['KS_S_1', 'KS_S_2', 'KS_S_3', 'KS_S_4', 'KS_S_5', 'KS_S_6'],
-        'edges_sul_norte': ['KN_N_2', 'KN_N_3', 'KN_N_4', 'KN_N_5', 'KN_N_6', 'KN_N_7'],
-        'distancia_entre': [600, 400, 300, 300]  # metros entre K1-K3, K3-K5, ...
-    },
-    'floriano_sul_norte': {
-        'tls_ids': ['F7', 'F5', 'F3', 'F1'],
-        'edges_norte_sul': ['FN_N_1', 'FN_N_2', 'FN_N_3', 'FN_N_4', 'FN_N_5', 'FN_N_6'],
-        'edges_sul_norte': ['FS_S_2', 'FS_S_3', 'FS_S_4', 'FS_S_5', 'FS_S_6', 'FS_S_7'],
-        'distancia_entre': [300, 300, 400, 600],
-    },
-    'martim_afonso_leste_oeste': {
-        'tls_ids': ['K1', 'X1', 'F1'],
-        'edges_leste_oeste': ['AL_O_1', 'AL_O_2', 'AL_O_3'],
-        'edges_oeste_leste': ['AL_L_2', 'AL_L_3', 'AL_L_4'],
-        'distancia_entre': [280, 340],
-    },
-    'mariano_torres_leste_oeste': {
-        'tls_ids': ['K5', 'X3', 'F5'],
-        'edges_leste_oeste': ['TO_O_1', 'TO_O_2', 'TO_O_3'],
-        'edges_oeste_leste': ['TO_L_2', 'TO_L_3', 'TO_L_4'],
-        'distancia_entre': [280, 340],
-    },
-}
-
-# Detectores virtuais: mapeia cada aproximação de interseção a um lane
-# Formato: {tls_id: {phase_index: [lane_ids]}}
-# Os índices de fase dependem do programa semafórico gerado pelo netconvert
-# Aqui definimos um mapeamento simplificado para edges que chegam na interseção
-DETECTOR_MAP = {}
+# Agrupamento para Onda Verde - desativado (usaremos controle adaptativo simples)
+ONDA_VERDE_GRUPOS = {}
 
 
 # ============================================================
@@ -294,11 +263,15 @@ def executar_controle():
     # Inicializa controlador fuzzy
     fuzzy_ctrl = ControladorFuzzy()
 
-    # Estado dos semáforos
-    estado_tls = {}  # {tls_id: {'fase_atual': int, 'tempo_fase': float, 'programa': ...}}
+    # Detectar TLS IDs dinamicamente
+    tls_ids = traci.trafficlight.getIDList()
+    print(f"  Semaforos detectados: {len(tls_ids)}")
+    for tid in tls_ids:
+        print(f"    {tid}")
     
-    # Inicializa estado para cada semáforo
-    for tls_id in TLS_IDS:
+    # Estado dos semaforos
+    estado_tls = {}
+    for tls_id in tls_ids:
         try:
             programa = traci.trafficlight.getCompleteRedYellowGreenDefinition(tls_id)
             estado_tls[tls_id] = {
@@ -307,7 +280,6 @@ def executar_controle():
                 'tempo_verde_base': T_VERDE_MIN,
                 'num_fases': len(programa[0].phases) if programa else 4,
             }
-            print(f"  TLS {tls_id}: {estado_tls[tls_id]['num_fases']} fases")
         except traci.exceptions.TraCIException:
             estado_tls[tls_id] = {
                 'fase_atual': 0,
@@ -316,7 +288,6 @@ def executar_controle():
                 'num_fases': 4,
             }
 
-    # Contador para estatísticas
     stats = {
         'trocas_fase': 0,
         'tempos_verde_aplicados': [],
@@ -326,21 +297,17 @@ def executar_controle():
     print("\n[CONTROLADOR] Iniciando controle adaptativo...")
     print("=" * 60)
     
-    while step < 90000:  # 9000s * 10 steps/s = 90000 steps (step-length=0.1)
+    while step < 90000:
         
         traci.simulationStep()
         tempo_sim = traci.simulation.getTime()
         
-        # A cada 3 segundos, recalcula tempos semafóricos
-        if step % 30 == 0:  # 30 steps * 0.1s = 3s
+        if step % 30 == 0:
             
-            for tls_id, estado in estado_tls.items():
+            for tls_id in estado_tls:
                 try:
                     fase_atual = traci.trafficlight.getPhase(tls_id)
-                    duracao_fase = traci.trafficlight.getPhaseDuration(tls_id)
-                    num_fases = estado['num_fases']
                     
-                    # Coleta dados de fila e ocupação para cada aproximação
                     num_links = traci.trafficlight.getControlledLinks(tls_id)
                     num_aproximacoes = len(num_links)
                     
@@ -354,68 +321,31 @@ def executar_controle():
                     
                     stats['filas_medias'].append(fila_max)
                     
-                    # Calcula novo tempo de verde fuzzy
                     extensao = fuzzy_ctrl.calcular_extensao(fila_max, ocup_max)
                     novo_verde = max(T_VERDE_MIN, min(T_VERDE_MAX, T_VERDE_MIN + extensao))
                     
-                    estado['tempo_verde_base'] = novo_verde
-                    
-                    # Aplica o novo tempo de duração da fase atual (se for fase verde)
-                    # No SUMO, cada programa tem fases alternadas (verde + amarelo + vermelho)
                     duracao_restante = traci.trafficlight.getNextSwitch(tls_id) - tempo_sim
                     
-                    # Se a duração restante é alta e o controlador quer mudar, ajusta
                     if duracao_restante > 10 and fase_atual % 2 == 0:
-                        # Fase verde atual -- ajusta duração
                         traci.trafficlight.setPhaseDuration(tls_id, novo_verde)
                     
                 except traci.exceptions.TraCIException:
                     pass
-            
-            # ---- SINCRONIZAÇÃO ONDA VERDE (a cada 30s) ----
-            if step % ONDA_VERDE_INTERVALO == 0:
-                for grupo_nome, grupo in ONDA_VERDE_GRUPOS.items():
-                    tls_ids = grupo['tls_ids']
-                    dists = grupo['distancia_entre']
-                    
-                    for i in range(len(tls_ids) - 1):
-                        tls_a = tls_ids[i]
-                        tls_b = tls_ids[i + 1]
-                        dist = dists[i]
-                        
-                        try:
-                            tempo_ciclo_a = traci.trafficlight.getCompleteRedYellowGreenDefinition(tls_a)[0].duration if traci.trafficlight.getCompleteRedYellowGreenDefinition(tls_a) else 60
-                        except:
-                            tempo_ciclo_a = 60
-                        
-                        offset = calcular_defasagem_onda_verde(dist, ONDA_VERDE_VELOCIDADE, tempo_ciclo_a)
-                        
-                        # Aplica offset relativo ao semáforo B
-                        try:
-                            tempo_corr = (tempo_sim + offset) % tempo_ciclo_a
-                            # Não há setOffset direto em versões recentes -- 
-                            # ajustamos via setPhaseDuration + setPhase
-                            pass
-                        except:
-                            pass
         
-        # Log a cada 900s simulados (15 min)
         if step % 9000 == 0 and step > 0:
             minuto = int(tempo_sim / 60)
             n_veiculos = traci.vehicle.getIDCount()
             fila_media = np.mean(stats['filas_medias'][-100:]) if stats['filas_medias'] else 0
-            print(f"  [t={minuto:3d}min] Veículos ativos: {n_veiculos:5d} | Fila média: {fila_media:.1f} veh")
+            print(f"  [t={minuto:3d}min] Veiculos ativos: {n_veiculos:5d} | Fila media: {fila_media:.1f} veh")
         
         step += 1
     
-    # Finaliza
     traci.close()
     
     print("=" * 60)
-    print("[CONTROLADOR] Simulação concluída.")
-    print(f"  Total de ajustes de fase: {stats['trocas_fase']}")
+    print("[CONTROLADOR] Simulacao concluida.")
     if stats['tempos_verde_aplicados']:
-        print(f"  Tempo verde médio: {np.mean(stats['tempos_verde_aplicados']):.1f}s")
+        print(f"  Tempo verde medio: {np.mean(stats['tempos_verde_aplicados']):.1f}s")
     print()
 
     return stats
@@ -428,20 +358,18 @@ def executar_controle():
 if __name__ == '__main__':
     print("=" * 60)
     print("  Controlador Adaptativo Fuzzy + Onda Verde")
-    print("  Quadrilátero Central de Curitiba")
-    print("  UTFPR - Ciências do Ambiente - 2026/1")
+    print("  Quadrilatero Central de Curitiba")
+    print("  UTFPR - Ciencias do Ambiente - 2026/1")
     print("=" * 60)
     print()
-    print("Certifique-se de que o SUMO está rodando com:")
-    print("  sumo-gui -c quadrilatero_tobe.sumocfg --start")
-    print("  (ou sumo -c quadrilatero_tobe.sumocfg --start)")
-    print()
-    
-    input("Pressione ENTER para conectar ao SUMO e iniciar o controle...")
+    print("Conectando ao SUMO na porta 8813...")
     
     estatisticas = executar_controle()
     
-    print("\nSimulação finalizada. Os resultados foram salvos em:")
+    print("\nSimulacao finalizada. Os resultados foram salvos em:")
     print("  results/tripinfo_tobe.xml")
     print("  results/emissions_tobe.xml")
-    print("  results/edgedata_tobe.xml")
+    if estatisticas:
+        print(f"  Ajustes de fase: {estatisticas.get('trocas_fase', 0)}")
+        if estatisticas.get('tempos_verde_aplicados'):
+            print(f"  Tempo verde medio: {np.mean(estatisticas['tempos_verde_aplicados']):.1f}s")

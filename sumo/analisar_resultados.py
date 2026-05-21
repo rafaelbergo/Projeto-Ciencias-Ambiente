@@ -90,6 +90,7 @@ def parse_emissions(filepath):
     """
     Lê o arquivo emission-output.xml do SUMO.
     Retorna DataFrame com emissões agregadas por poluente.
+    Suporta ambos os formatos: <timestep><vehicle/> e <vehicle><timestep/>
     """
     if not os.path.exists(filepath):
         print(f"  [AVISO] Arquivo não encontrado: {filepath}")
@@ -99,32 +100,45 @@ def parse_emissions(filepath):
     root = tree.getroot()
 
     registros = []
-    for veh in root.findall('vehicle'):
-        vid = veh.get('id', '')
-        for step in veh.findall('timestep'):
+    
+    # Formato novo: <timestep time="..."><vehicle .../></timestep>
+    for ts in root.findall('timestep'):
+        t = float(ts.get('time', 0))
+        for veh in ts.findall('vehicle'):
             try:
-                t = float(step.get('time', 0))
-                co2 = float(step.get('CO2', 0))       # mg/s
-                co  = float(step.get('CO', 0))
-                nox = float(step.get('NOx', 0))
-                pmx = float(step.get('PMx', 0))
-                hc  = float(step.get('HC', 0))
-                fuel = float(step.get('fuel', 0))      # ml/s
-                speed = float(step.get('speed', 0))
-
                 registros.append({
-                    'vehicle_id': vid,
+                    'vehicle_id': veh.get('id', ''),
                     'time': t,
-                    'CO2_mgs': co2,
-                    'CO_mgs': co,
-                    'NOx_mgs': nox,
-                    'PMx_mgs': pmx,
-                    'HC_mgs': hc,
-                    'fuel_mls': fuel,
-                    'speed_ms': speed,
+                    'CO2_mgs': float(veh.get('CO2', 0)),
+                    'CO_mgs': float(veh.get('CO', 0)),
+                    'NOx_mgs': float(veh.get('NOx', 0)),
+                    'PMx_mgs': float(veh.get('PMx', 0)),
+                    'HC_mgs': float(veh.get('HC', 0)),
+                    'fuel_mls': float(veh.get('fuel', 0)),
+                    'speed_ms': float(veh.get('speed', 0)),
                 })
             except (ValueError, TypeError, KeyError):
                 continue
+    
+    # Formato antigo: <vehicle id="..."><timestep .../></vehicle>
+    if not registros:
+        for veh in root.findall('vehicle'):
+            vid = veh.get('id', '')
+            for step in veh.findall('timestep'):
+                try:
+                    registros.append({
+                        'vehicle_id': vid,
+                        'time': float(step.get('time', 0)),
+                        'CO2_mgs': float(step.get('CO2', 0)),
+                        'CO_mgs': float(step.get('CO', 0)),
+                        'NOx_mgs': float(step.get('NOx', 0)),
+                        'PMx_mgs': float(step.get('PMx', 0)),
+                        'HC_mgs': float(step.get('HC', 0)),
+                        'fuel_mls': float(step.get('fuel', 0)),
+                        'speed_ms': float(step.get('speed', 0)),
+                    })
+                except (ValueError, TypeError, KeyError):
+                    continue
 
     return pd.DataFrame(registros)
 
@@ -203,6 +217,9 @@ def analisar_tripinfo(df_asis, df_tobe):
 def analisar_emissions(df_asis, df_tobe):
     """Compara emissões entre os cenários."""
     if df_asis is None or df_tobe is None:
+        return {}
+    if df_asis.empty or df_tobe.empty:
+        print("  [AVISO] DataFrames de emissões vazios.")
         return {}
 
     metricas = {}
