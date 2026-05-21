@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+
+    <!-- ============================================================
+    Quadrilátero Central de Curitiba - Rotas e Demanda
+    
+    Demanda baseada em VPD estimado (URBS/IPPUC):
+      - Pres. Kennedy:         ~45.000 veiculos/dia → ~7.800/pico (2.5h)
+      - Mal. Floriano:         ~38.000 veiculos/dia → ~6.500/pico
+      - Martim Afonso:         ~18.000 veiculos/dia → ~3.100/pico
+      - Mariano Torres:        ~22.000 veiculos/dia → ~3.800/pico
+      - Mario Tourinho:        ~15.000 veiculos/dia → ~2.500/pico
+    
+    Escala para simulacao (1/100):
+      - Kennedy N→S: 78 veh/h → 1 veh a cada ~46s
+      - Kennedy S→N: 72 veh/h → 1 veh a cada ~50s
+      - etc.
+    
+    Composicao da frota: 55% gasolina, 15% etanol, 12% moto, 13% onibus, 5% VUC
+    ============================================================ -->
+
+    <!-- Tipos de veiculos -->
+    <vType id="carro_gasolina"  accel="2.6" decel="4.5" sigma="0.5" length="4.3"  minGap="2.5" maxSpeed="16.67" color="0.2,0.2,0.8" emissionClass="HBEFA4/G_EURO6"/>
+    <vType id="carro_etanol"    accel="2.6" decel="4.5" sigma="0.5" length="4.3"  minGap="2.5" maxSpeed="16.67" color="0.1,0.7,0.1" emissionClass="HBEFA4/G_EURO6"/>
+    <vType id="moto"            accel="3.5" decel="6.0" sigma="0.7" length="2.0"  minGap="1.5" maxSpeed="18.06" color="0.9,0.3,0.1" emissionClass="HBEFA4/LC_LEURO4"/>
+    <vType id="onibus"          accel="1.3" decel="3.5" sigma="0.3" length="12.0" minGap="3.0" maxSpeed="13.89" color="0.8,0.8,0.0" emissionClass="HBEFA4/HDV_D_EURO6"/>
+    <vType id="vuc"             accel="1.5" decel="3.8" sigma="0.4" length="7.0"  minGap="3.0" maxSpeed="13.89" color="0.5,0.5,0.5" emissionClass="HBEFA4/HDV_D_EURO6"/>
+
+    <!-- ============================================= -->
+    <!-- Rotas pre-definidas -->
+    <!-- ============================================= -->
+
+    <!-- Pres. Kennedy: travessia completa Norte→Sul -->
+    <route id="r_KS_full"     edges="KN_S_1 KS_S_1 KS_S_2 KS_S_3 KS_S_4 KS_S_5 KS_S_6 KS_S_7"/>
+    <!-- Pres. Kennedy: travessia completa Sul→Norte -->
+    <route id="r_KN_full"     edges="KN_N_1 KN_N_2 KN_N_3 KN_N_4 KN_N_5 KN_N_6 KN_N_7 KN_N_8"/>
+
+    <!-- Mal. Floriano: travessia completa Sul→Norte -->
+    <route id="r_FN_full"     edges="FN_N_1 FN_N_2 FN_N_3 FN_N_4 FN_N_5 FN_N_6 FN_N_7 FN_N_8"/>
+    <!-- Mal. Floriano: travessia completa Norte→Sul -->
+    <route id="r_FS_full"     edges="FS_S_1 FS_S_2 FS_S_3 FS_S_4 FS_S_5 FS_S_6 FS_S_7 FS_S_8"/>
+
+    <!-- Martim Afonso: travessia completa Leste→Oeste -->
+    <route id="r_AL_full"     edges="AL_O_1 AL_O_2 AL_O_3 AL_O_4"/>
+    <!-- Martim Afonso: travessia completa Oeste→Leste -->
+    <route id="r_AL_rev"      edges="AL_L_1 AL_L_2 AL_L_3 AL_L_4"/>
+
+    <!-- Mariano Torres: travessia completa Leste→Oeste -->
+    <route id="r_TO_full"     edges="TO_O_1 TO_O_2 TO_O_3 TO_O_4"/>
+    <!-- Mariano Torres: travessia completa Oeste→Leste -->
+    <route id="r_TO_rev"      edges="TO_L_1 TO_L_2 TO_L_3 TO_L_4"/>
+
+    <!-- Mario Tourinho: travessia completa Leste→Oeste -->
+    <route id="r_TU_full"     edges="TU_O_1 TU_O_2 TU_O_3 TU_O_4"/>
+    <!-- Mario Tourinho: travessia completa Oeste→Leste -->
+    <route id="r_TU_rev"      edges="TU_L_1 TU_L_2 TU_L_3 TU_L_4"/>
+
+    <!-- Rotas de desvio: Kennedy → Martim Afonso (vira à direita/esquerda) -->
+    <route id="r_KS_to_AL_O"  edges="KN_S_1 KS_S_1 AL_O_2 AL_O_3 AL_O_4"/>
+    <route id="r_KS_to_AL_L"  edges="KN_S_1 KS_S_1 AL_L_4"/>  <!-- volta leste -->
+
+    <!-- Rotas de desvio: Kennedy → Mariano Torres -->
+    <route id="r_KS_to_TO_O"  edges="KN_S_1 KS_S_1 KS_S_2 KS_S_3 KS_S_4 TO_O_2 TO_O_3 TO_O_4"/>
+    <route id="r_KN_to_TO_L"  edges="KN_N_1 KN_N_2 KN_N_3 TO_L_3 TO_L_4"/>
+
+    <!-- Rotas de desvio: Kennedy → Mario Tourinho -->
+    <route id="r_KS_to_TU_O"  edges="KN_S_1 KS_S_1 KS_S_2 KS_S_3 KS_S_4 KS_S_5 KS_S_6 TU_O_2 TU_O_3 TU_O_4"/>
+    <route id="r_KN_to_TU_L"  edges="KN_N_1 TU_L_3 TU_L_4"/>
+
+    <!-- Rotas de desvio: Floriano → Martim Afonso -->
+    <route id="r_FN_to_AL_L"  edges="FN_N_1 FN_N_2 FN_N_3 FN_N_4 FN_N_5 FN_N_6 FN_N_7 AL_L_2 AL_L_3 AL_L_4"/>
+    <route id="r_FS_to_AL_O"  edges="FS_S_1 AL_O_4"/>
+
+    <!-- Rotas de desvio: Floriano → Mariano Torres -->
+    <route id="r_FN_to_TO_L"  edges="FN_N_1 FN_N_2 FN_N_3 FN_N_4 TO_L_2 TO_L_3 TO_L_4"/>
+    <route id="r_FS_to_TO_O"  edges="FS_S_1 FS_S_2 FS_S_3 TO_O_4"/>
+
+    <!-- Rotas de desvio: Floriano → Mario Tourinho -->
+    <route id="r_FN_to_TU_L"  edges="FN_N_1 TU_L_2 TU_L_3 TU_L_4"/>
+    <route id="r_FS_to_TU_O"  edges="FS_S_1 FS_S_2 FS_S_3 FS_S_4 FS_S_5 TU_O_4"/>
+
+    <!-- ============================================= -->
+    <!-- Fluxos de veiculos (demanda) - Janela de pico matutina (06:30-09:00 = 9000s) -->
+    <!-- ============================================= -->
+
+    <!-- Pres. Kennedy Norte→Sul (78 veh/h escalado = 195 veh total em 9000s) -->
+    <flow id="fk_ks_car_g"  route="r_KS_full"  type="carro_gasolina"  begin="0" end="9000" vehsPerHour="43"  departSpeed="random"/>
+    <flow id="fk_ks_car_e"  route="r_KS_full"  type="carro_etanol"    begin="0" end="9000" vehsPerHour="12"  departSpeed="random"/>
+    <flow id="fk_ks_moto"   route="r_KS_full"  type="moto"            begin="0" end="9000" vehsPerHour="9"   departSpeed="random"/>
+    <flow id="fk_ks_bus"    route="r_KS_full"  type="onibus"          begin="0" end="9000" vehsPerHour="10"  departSpeed="random"/>
+    <flow id="fk_ks_vuc"    route="r_KS_full"  type="vuc"             begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+
+    <!-- Pres. Kennedy Sul→Norte (72 veh/h escalado) -->
+    <flow id="fk_kn_car_g"  route="r_KN_full"  type="carro_gasolina"  begin="0" end="9000" vehsPerHour="40"  departSpeed="random"/>
+    <flow id="fk_kn_car_e"  route="r_KN_full"  type="carro_etanol"    begin="0" end="9000" vehsPerHour="11"  departSpeed="random"/>
+    <flow id="fk_kn_moto"   route="r_KN_full"  type="moto"            begin="0" end="9000" vehsPerHour="9"   departSpeed="random"/>
+    <flow id="fk_kn_bus"    route="r_KN_full"  type="onibus"          begin="0" end="9000" vehsPerHour="9"   departSpeed="random"/>
+    <flow id="fk_kn_vuc"    route="r_KN_full"  type="vuc"             begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+
+    <!-- Mal. Floriano Sul→Norte (65 veh/h) -->
+    <flow id="ff_fn_car_g"  route="r_FN_full"  type="carro_gasolina"  begin="0" end="9000" vehsPerHour="36"  departSpeed="random"/>
+    <flow id="ff_fn_car_e"  route="r_FN_full"  type="carro_etanol"    begin="0" end="9000" vehsPerHour="10"  departSpeed="random"/>
+    <flow id="ff_fn_moto"   route="r_FN_full"  type="moto"            begin="0" end="9000" vehsPerHour="8"   departSpeed="random"/>
+    <flow id="ff_fn_bus"    route="r_FN_full"  type="onibus"          begin="0" end="9000" vehsPerHour="8"   departSpeed="random"/>
+    <flow id="ff_fn_vuc"    route="r_FN_full"  type="vuc"             begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+
+    <!-- Mal. Floriano Norte→Sul (60 veh/h) -->
+    <flow id="ff_fs_car_g"  route="r_FS_full"  type="carro_gasolina"  begin="0" end="9000" vehsPerHour="33"  departSpeed="random"/>
+    <flow id="ff_fs_car_e"  route="r_FS_full"  type="carro_etanol"    begin="0" end="9000" vehsPerHour="9"   departSpeed="random"/>
+    <flow id="ff_fs_moto"   route="r_FS_full"  type="moto"            begin="0" end="9000" vehsPerHour="7"   departSpeed="random"/>
+    <flow id="ff_fs_bus"    route="r_FS_full"  type="onibus"          begin="0" end="9000" vehsPerHour="8"   departSpeed="random"/>
+    <flow id="ff_fs_vuc"    route="r_FS_full"  type="vuc"             begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+
+    <!-- Martim Afonso Leste→Oeste (31 veh/h) -->
+    <flow id="fa_lo_car_g"  route="r_AL_full"  type="carro_gasolina"  begin="0" end="9000" vehsPerHour="17"  departSpeed="random"/>
+    <flow id="fa_lo_car_e"  route="r_AL_full"  type="carro_etanol"    begin="0" end="9000" vehsPerHour="5"   departSpeed="random"/>
+    <flow id="fa_lo_moto"   route="r_AL_full"  type="moto"            begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="fa_lo_bus"    route="r_AL_full"  type="onibus"          begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+    <flow id="fa_lo_vuc"    route="r_AL_full"  type="vuc"             begin="0" end="9000" vehsPerHour="2"   departSpeed="random"/>
+
+    <!-- Martim Afonso Oeste→Leste (30 veh/h) -->
+    <flow id="fa_ol_car_g"  route="r_AL_rev"   type="carro_gasolina"  begin="0" end="9000" vehsPerHour="16"  departSpeed="random"/>
+    <flow id="fa_ol_car_e"  route="r_AL_rev"   type="carro_etanol"    begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="fa_ol_moto"   route="r_AL_rev"   type="moto"            begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="fa_ol_bus"    route="r_AL_rev"   type="onibus"          begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="fa_ol_vuc"    route="r_AL_rev"   type="vuc"             begin="0" end="9000" vehsPerHour="2"   departSpeed="random"/>
+
+    <!-- Mariano Torres Leste→Oeste (38 veh/h) -->
+    <flow id="ft_lo_car_g"  route="r_TO_full"  type="carro_gasolina"  begin="0" end="9000" vehsPerHour="21"  departSpeed="random"/>
+    <flow id="ft_lo_car_e"  route="r_TO_full"  type="carro_etanol"    begin="0" end="9000" vehsPerHour="6"   departSpeed="random"/>
+    <flow id="ft_lo_moto"   route="r_TO_full"  type="moto"            begin="0" end="9000" vehsPerHour="5"   departSpeed="random"/>
+    <flow id="ft_lo_bus"    route="r_TO_full"  type="onibus"          begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="ft_lo_vuc"    route="r_TO_full"  type="vuc"             begin="0" end="9000" vehsPerHour="2"   departSpeed="random"/>
+
+    <!-- Mariano Torres Oeste→Leste (36 veh/h) -->
+    <flow id="ft_ol_car_g"  route="r_TO_rev"   type="carro_gasolina"  begin="0" end="9000" vehsPerHour="20"  departSpeed="random"/>
+    <flow id="ft_ol_car_e"  route="r_TO_rev"   type="carro_etanol"    begin="0" end="9000" vehsPerHour="5"   departSpeed="random"/>
+    <flow id="ft_ol_moto"   route="r_TO_rev"   type="moto"            begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="ft_ol_bus"    route="r_TO_rev"   type="onibus"          begin="0" end="9000" vehsPerHour="5"   departSpeed="random"/>
+    <flow id="ft_ol_vuc"    route="r_TO_rev"   type="vuc"             begin="0" end="9000" vehsPerHour="2"   departSpeed="random"/>
+
+    <!-- Mario Tourinho Leste→Oeste (25 veh/h) -->
+    <flow id="fu_lo_car_g"  route="r_TU_full"  type="carro_gasolina"  begin="0" end="9000" vehsPerHour="14"  departSpeed="random"/>
+    <flow id="fu_lo_car_e"  route="r_TU_full"  type="carro_etanol"    begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="fu_lo_moto"   route="r_TU_full"  type="moto"            begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+    <flow id="fu_lo_bus"    route="r_TU_full"  type="onibus"          begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+    <flow id="fu_lo_vuc"    route="r_TU_full"  type="vuc"             begin="0" end="9000" vehsPerHour="1"   departSpeed="random"/>
+
+    <!-- Mario Tourinho Oeste→Leste (24 veh/h) -->
+    <flow id="fu_ol_car_g"  route="r_TU_rev"   type="carro_gasolina"  begin="0" end="9000" vehsPerHour="13"  departSpeed="random"/>
+    <flow id="fu_ol_car_e"  route="r_TU_rev"   type="carro_etanol"    begin="0" end="9000" vehsPerHour="4"   departSpeed="random"/>
+    <flow id="fu_ol_moto"   route="r_TU_rev"   type="moto"            begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+    <flow id="fu_ol_bus"    route="r_TU_rev"   type="onibus"          begin="0" end="9000" vehsPerHour="3"   departSpeed="random"/>
+    <flow id="fu_ol_vuc"    route="r_TU_rev"   type="vuc"             begin="0" end="9000" vehsPerHour="1"   departSpeed="random"/>
+
+    <!-- Fluxos de desvio: Kennedy Norte→Sul virando em Martim Afonso (~15% do total) -->
+    <flow id="fd_ks_af_car" route="r_KS_to_AL_O"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="6" departSpeed="random"/>
+    <flow id="fd_ks_to_car" route="r_KS_to_TO_O"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="8" departSpeed="random"/>
+    <flow id="fd_ks_tu_car" route="r_KS_to_TU_O"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="5" departSpeed="random"/>
+
+    <!-- Fluxos de desvio: Kennedy Sul→Norte -->
+    <flow id="fd_kn_to_car" route="r_KN_to_TO_L"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="7" departSpeed="random"/>
+    <flow id="fd_kn_tu_car" route="r_KN_to_TU_L"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="4" departSpeed="random"/>
+
+    <!-- Fluxos de desvio: Floriano Sul→Norte -->
+    <flow id="fd_fn_al_car" route="r_FN_to_AL_L"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="5" departSpeed="random"/>
+    <flow id="fd_fn_to_car" route="r_FN_to_TO_L"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="7" departSpeed="random"/>
+    <flow id="fd_fn_tu_car" route="r_FN_to_TU_L"  type="carro_gasolina" begin="0" end="9000" vehsPerHour="4" departSpeed="random"/>
+
+</routes>

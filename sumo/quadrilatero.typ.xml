@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/types_file.xsd">
+
+    <!-- Arterial: 3 faixas, 50 km/h, prioridade 2 -->
+    <type id="arterial"   numLanes="3" speed="13.89" priority="2" default_disallowed="pedestrian" width="3.2"/>
+
+    <!-- Coletora: 2 faixas, 40 km/h, prioridade 1 -->
+    <type id="coletora"   numLanes="2" speed="11.11" priority="1" default_disallowed="pedestrian" width="3.0"/>
+
+</types>
