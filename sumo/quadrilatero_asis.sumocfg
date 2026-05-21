@@ -8,7 +8,7 @@
 
     <time>
         <begin value="0"/>
-        <end value="9000"/>     <!-- 2.5h = janela de pico matutina -->
+        <end value="9000"/>
     </time>
 
     <processing>
@@ -18,21 +18,14 @@
     </processing>
 
     <output>
-        <!-- TripInfo: métricas individuais de cada veículo -->
         <tripinfo-output value="results/tripinfo_asis.xml"/>
         <tripinfo-output.write-unfinished value="true"/>
 
-        <!-- Emission outputs -->
         <emission-output value="results/emissions_asis.xml"/>
         <emission-output.precision value="4"/>
 
-        <!-- Edge-based traffic measures -->
-        <edgebased-output value="results/edgedata_asis.xml"/>
-        <edgebased-output.period value="300"/>
-
-        <!-- Lane area detectors (virtual loops) output -->
         <lanechange-output value="results/lanechange_asis.xml"/>
-    </processing>
+    </output>
 
     <report>
         <verbose value="false"/>

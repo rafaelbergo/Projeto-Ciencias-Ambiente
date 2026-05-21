@@ -22,10 +22,7 @@
 
         <emission-output value="results/emissions_tobe.xml"/>
         <emission-output.precision value="4"/>
-
-        <edgebased-output value="results/edgedata_tobe.xml"/>
-        <edgebased-output.period value="300"/>
-    </processing>
+    </output>
 
     <report>
         <verbose value="false"/>

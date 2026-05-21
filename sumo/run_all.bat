@@ -30,7 +30,7 @@ if not exist "output" mkdir output
 REM ===== PASSO 3: Rodar simulacao As-Is =====
 echo [PASSO 3/5] Executando simulacao do cenario As-Is (semafóros fixos)...
 echo            Isso pode levar alguns minutos...
-sumo -c quadrilatero_asis.sumocfg --no-warnings 2>&1
+"C:\Program Files (x86)\Eclipse\Sumo\bin\sumo.exe" -c quadrilatero_asis.sumocfg --no-warnings 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo AVISO: Simulacao As-Is concluida com warnings (normal).
 )
@@ -42,7 +42,7 @@ echo [PASSO 4/5] Executando simulacao do cenario To-Be (controlador adaptativo).
 echo            Iniciando SUMO em modo servidor...
 
 REM Inicia SUMO em background escutando na porta 8813
-start "SUMO_ToBe" /MIN sumo -c quadrilatero_tobe.sumocfg --remote-port 8813 --no-warnings
+start "SUMO_ToBe" /MIN "C:\Program Files (x86)\Eclipse\Sumo\bin\sumo.exe" -c quadrilatero_tobe.sumocfg --remote-port 8813 --no-warnings
 
 REM Aguarda o SUMO inicializar
 echo            Aguardando SUMO iniciar... (5s)

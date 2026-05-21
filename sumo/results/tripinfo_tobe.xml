@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-05-21T10:39:10.522535-03:00 by Eclipse SUMO GUI 1.27.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="C:\Users\rafa1\OneDrive\Desktop\CA\sumo\quadrilatero.net.xml"/>
+        <route-files value="C:\Users\rafa1\OneDrive\Desktop\CA\sumo\quadrilatero.rou.xml"/>
+    </input>
+
+    <output>
+        <emission-output value="C:\Users\rafa1\OneDrive\Desktop\CA\sumo\results/emissions_tobe.xml"/>
+        <emission-output.precision value="4"/>
+        <tripinfo-output value="C:\Users\rafa1\OneDrive\Desktop\CA\sumo\results/tripinfo_tobe.xml"/>
+        <tripinfo-output.write-unfinished value="true"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="9000"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="1.6"/>
+    </processing>
+
+    <report>
+        <verbose value="false"/>
+        <duration-log.disable value="true"/>
+        <no-step-log value="true"/>
+    </report>
+
+    <random_number>
+        <seed value="42"/>
+    </random_number>
+
+</sumoConfiguration>
+-->
+
+<tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+    <tripinfo id="fk_ks_car_g.0" depart="0.00" departLane="KN_S_1_0" departPos="4.40" departPosLat="0.00" departSpeed="4.93" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fk_ks_car_g.0 emissions_fk_ks_car_g.0" vType="carro_gasolina" speedFactor="0.95" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fk_ks_car_e.0" depart="0.00" departLane="KN_S_1_1" departPos="4.40" departPosLat="0.00" departSpeed="11.86" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fk_ks_car_e.0 emissions_fk_ks_car_e.0" vType="carro_etanol" speedFactor="1.07" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fk_ks_moto.0" depart="0.00" departLane="KN_S_1_2" departPos="2.10" departPosLat="0.00" departSpeed="15.34" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fk_ks_moto.0 emissions_fk_ks_moto.0" vType="moto" speedFactor="1.16" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fk_kn_car_g.0" depart="0.00" departLane="KN_N_1_0" departPos="4.40" departPosLat="0.00" departSpeed="11.03" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fk_kn_car_g.0 emissions_fk_kn_car_g.0" vType="carro_gasolina" speedFactor="1.08" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fk_kn_moto.0" depart="0.00" departLane="KN_N_1_1" departPos="2.10" departPosLat="0.00" departSpeed="9.41" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fk_kn_moto.0 emissions_fk_kn_moto.0" vType="moto" speedFactor="1.13" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="ff_fn_car_g.0" depart="0.00" departLane="FN_N_1_0" departPos="4.40" departPosLat="0.00" departSpeed="8.30" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_ff_fn_car_g.0 emissions_ff_fn_car_g.0" vType="carro_gasolina" speedFactor="1.00" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="ff_fs_car_g.0" depart="0.00" departLane="FS_S_1_0" departPos="4.40" departPosLat="0.00" departSpeed="6.13" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_ff_fs_car_g.0 emissions_ff_fs_car_g.0" vType="carro_gasolina" speedFactor="0.99" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="ff_fs_car_e.0" depart="0.00" departLane="FS_S_1_1" departPos="4.40" departPosLat="0.00" departSpeed="2.44" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_ff_fs_car_e.0 emissions_ff_fs_car_e.0" vType="carro_etanol" speedFactor="1.13" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fa_lo_car_g.0" depart="0.00" departLane="AL_O_1_0" departPos="4.40" departPosLat="0.00" departSpeed="0.71" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fa_lo_car_g.0 emissions_fa_lo_car_g.0" vType="carro_gasolina" speedFactor="1.10" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fa_lo_bus.0" depart="0.00" departLane="AL_O_1_1" departPos="12.10" departPosLat="0.00" departSpeed="10.79" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fa_lo_bus.0 emissions_fa_lo_bus.0" vType="onibus" speedFactor="1.12" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fa_ol_car_g.0" depart="0.00" departLane="AL_L_1_0" departPos="4.40" departPosLat="0.00" departSpeed="4.00" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fa_ol_car_g.0 emissions_fa_ol_car_g.0" vType="carro_gasolina" speedFactor="1.08" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fa_ol_vuc.0" depart="0.00" departLane="AL_L_1_1" departPos="7.10" departPosLat="0.00" departSpeed="1.71" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fa_ol_vuc.0 emissions_fa_ol_vuc.0" vType="vuc" speedFactor="1.08" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="ft_lo_car_g.0" depart="0.00" departLane="TO_O_1_0" departPos="4.40" departPosLat="0.00" departSpeed="7.41" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_ft_lo_car_g.0 emissions_ft_lo_car_g.0" vType="carro_gasolina" speedFactor="0.94" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="ft_lo_car_e.0" depart="0.00" departLane="TO_O_1_1" departPos="4.40" departPosLat="0.00" departSpeed="7.78" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_ft_lo_car_e.0 emissions_ft_lo_car_e.0" vType="carro_etanol" speedFactor="1.08" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="ft_ol_car_g.0" depart="0.00" departLane="TO_L_1_0" departPos="4.40" departPosLat="0.00" departSpeed="0.72" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_ft_ol_car_g.0 emissions_ft_ol_car_g.0" vType="carro_gasolina" speedFactor="1.15" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fu_lo_car_g.0" depart="0.00" departLane="TU_O_1_0" departPos="4.40" departPosLat="0.00" departSpeed="6.90" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fu_lo_car_g.0 emissions_fu_lo_car_g.0" vType="carro_gasolina" speedFactor="0.86" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fu_lo_car_e.0" depart="0.00" departLane="TU_O_1_1" departPos="4.40" departPosLat="0.00" departSpeed="8.82" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fu_lo_car_e.0 emissions_fu_lo_car_e.0" vType="carro_etanol" speedFactor="0.95" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fu_ol_car_g.0" depart="0.00" departLane="TU_L_1_0" departPos="4.40" departPosLat="0.00" departSpeed="2.34" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fu_ol_car_g.0 emissions_fu_ol_car_g.0" vType="carro_gasolina" speedFactor="0.99" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+    <tripinfo id="fu_ol_moto.0" depart="0.00" departLane="TU_L_1_1" departPos="2.10" departPosLat="0.00" departSpeed="2.09" departDelay="0.00" arrival="-1.00" arrivalLane="" arrivalPos="-1.00" arrivalPosLat="0.00" arrivalSpeed="-1.00" duration="0.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_fu_ol_moto.0 emissions_fu_ol_moto.0" vType="moto" speedFactor="1.03" vaporized="end">
+        <emissions CO_abs="0.0000" CO2_abs="0.0000" HC_abs="0.0000" PMx_abs="0.0000" NOx_abs="0.0000" fuel_abs="0.0000" electricity_abs="0.0000"/>
+    </tripinfo>
+</tripinfos>

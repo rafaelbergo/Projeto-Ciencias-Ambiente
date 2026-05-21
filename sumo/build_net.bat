@@ -4,7 +4,7 @@ echo  Construindo rede viaria do Quadrilatero Central de Curitiba
 echo ============================================================
 
 REM Gera o .net.xml a partir dos arquivos .nod.xml e .edg.xml
-netconvert ^
+"C:\Program Files (x86)\Eclipse\Sumo\bin\netconvert.exe" ^
   --node-files=quadrilatero.nod.xml ^
   --edge-files=quadrilatero.edg.xml ^
   --type-files=quadrilatero.typ.xml ^
