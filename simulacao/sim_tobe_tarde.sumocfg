@@ -1,0 +1,18 @@
+<configuration>
+    <input>
+        <net-file value="curitiba_tobe.net.xml"/>
+        <route-files value="demanda_tarde.rou.xml"/>
+    </input>
+    <output>
+        <tripinfo-output value="outputs/tripinfo_tobe_tarde.xml"/>
+        <summary-output value="outputs/summary_tobe_tarde.xml"/>
+    </output>
+    <time>
+        <begin value="0"/>
+        <end value="7200"/>
+    </time>
+    <report>
+        <no-step-log value="true"/>
+        <no-warnings value="true"/>
+    </report>
+</configuration>

@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard CA - UTFPR | Otimização de Tráfego e Emissões</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: hsl(150, 20%, 6%);
+            --bg-card: hsl(150, 18%, 10%);
+            --bg-card-hover: hsl(150, 18%, 12%);
+            --border-color: rgba(45, 106, 79, 0.25);
+            --border-hover: rgba(45, 106, 79, 0.5);
+            
+            --text-primary: hsl(150, 10%, 94%);
+            --text-secondary: hsl(150, 8%, 70%);
+            --text-muted: hsl(150, 6%, 50%);
+            
+            --color-emerald: hsl(143, 56%, 45%);
+            --color-emerald-glow: rgba(45, 106, 79, 0.4);
+            --color-forest: hsl(154, 52%, 24%);
+            --color-danger: hsl(0, 75%, 60%);
+            --color-danger-glow: rgba(220, 53, 69, 0.3);
+            
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(27, 67, 50, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(45, 106, 79, 0.12) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            animation: fadeInDown 0.8s var(--transition-smooth);
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary) 30%, var(--color-emerald) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .header-title p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+
+        .header-meta {
+            text-align: right;
+        }
+
+        .header-meta .discipline {
+            font-family: 'Outfit', sans-serif;
+            color: var(--color-emerald);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .header-meta .group {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Controles / Toggle */
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 1s var(--transition-smooth) 0.1s both;
+        }
+
+        .period-toggle {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem;
+            border-radius: 30px;
+            display: flex;
+            gap: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn.active {
+            background-color: var(--color-emerald);
+            color: var(--text-primary);
+            box-shadow: 0 0 15px var(--color-emerald-glow);
+        }
+
+        .toggle-btn:not(.active):hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Grid de Cards de Metricas */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            animation: fadeInUp 0.8s var(--transition-smooth) 0.2s both;
+        }
+
+        .metric-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--color-emerald);
+            opacity: 0.7;
+        }
+
+        .metric-card.negative::before {
+            background-color: var(--color-danger);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 40px rgba(45, 106, 79, 0.1);
+        }
+
+        .metric-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-icon {
+            font-size: 1.2rem;
+            color: var(--color-emerald);
+            opacity: 0.8;
+        }
+
+        .metric-card.negative .metric-icon {
+            color: var(--color-danger);
+        }
+
+        .metric-value-row {
+            display: flex;
+            align-items: baseline;
+            gap: 0.8rem;
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            transition: var(--transition-smooth);
+        }
+
+        .metric-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: var(--transition-smooth);
+        }
+
+        .badge-positive {
+            background-color: rgba(45, 106, 79, 0.2);
+            color: var(--color-emerald);
+            border: 1px solid rgba(45, 106, 79, 0.3);
+        }
+
+        .badge-negative {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--color-danger);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .metric-comparison {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Seção de Graficos */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            animation: fadeInUp 0.8s var(--transition-smooth) 0.3s both;
+        }
+
+        @media (max-width: 768px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Seção Interativa - Calculadora de CO2 */
+        .calculator-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            animation: fadeInUp 0.8s var(--transition-smooth) 0.4s both;
+        }
+
+        @media (max-width: 992px) {
+            .calculator-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .interactive-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .calc-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .calc-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-emerald);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calc-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .calc-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .input-label span.value {
+            font-family: 'Outfit', sans-serif;
+            color: var(--color-emerald);
+            font-weight: 600;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: var(--bg-dark);
+            outline: none;
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-emerald);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--color-emerald-glow);
+            transition: var(--transition-smooth);
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .calc-result-box {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calc-result-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--color-emerald);
+            text-shadow: 0 0 20px var(--color-emerald-glow);
+            transition: var(--transition-smooth);
+        }
+
+        .calc-result-lbl {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .calc-result-equivalent {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Grid de Atribuições de Engenharia */
+        .engineering-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            animation: fadeInUp 0.8s var(--transition-smooth) 0.5s both;
+        }
+
+        .eng-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        .eng-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+        }
+
+        .eng-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .eng-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background-color: rgba(45, 106, 79, 0.1);
+            border: 1px solid rgba(45, 106, 79, 0.2);
+            color: var(--color-emerald);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .eng-card:nth-child(2) .eng-icon {
+            background-color: rgba(54, 162, 235, 0.1);
+            border-color: rgba(54, 162, 235, 0.2);
+            color: hsl(200, 75%, 60%);
+        }
+
+        .eng-card:nth-child(3) .eng-icon {
+            background-color: rgba(255, 159, 64, 0.1);
+            border-color: rgba(255, 159, 64, 0.2);
+            color: hsl(30, 75%, 60%);
+        }
+
+        .eng-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        .eng-name span {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 0.15rem;
+        }
+
+        .eng-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.8rem;
+        }
+
+        .eng-list li {
+            position: relative;
+            padding-left: 1.2rem;
+            line-height: 1.4;
+        }
+
+        .eng-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--color-emerald);
+        }
+
+        .eng-card:nth-child(2) .eng-list li::before {
+            color: hsl(200, 75%, 60%);
+        }
+
+        .eng-card:nth-child(3) .eng-list li::before {
+            color: hsl(30, 75%, 60%);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            animation: fadeIn 1.2s var(--transition-smooth) 0.6s both;
+        }
+
+        /* Keyframes */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <div class="header-title">
+            <h1>Mobilidade Central Curitiba</h1>
+            <p>Otimização Semafórica Inteligente e Emissões Atmosféricas</p>
+        </div>
+        <div class="header-meta">
+            <div class="discipline">Ciências do Ambiente - UTFPR</div>
+        </div>
+    </header>
+
+    <!-- Controles -->
+    <div class="controls-row">
+        <div class="period-toggle">
+            <button class="toggle-btn active" onclick="switchPeriod('manha')" id="btn-manha">
+                <i class="fa-solid fa-cloud-sun"></i> Pico Manhã (06:30 - 09:00)
+            </button>
+            <button class="toggle-btn" onclick="switchPeriod('tarde')" id="btn-tarde">
+                <i class="fa-solid fa-cloud-moon"></i> Pico Tarde (17:00 - 19:00)
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Metricas Principais -->
+    <div class="metrics-grid">
+        <!-- Throughput -->
+        <div class="metric-card">
+            <div class="metric-card-header">
+                <span class="metric-label">Veículos Concluídos</span>
+                <i class="fa-solid fa-car-side metric-icon"></i>
+            </div>
+            <div class="metric-value-row">
+                <span class="metric-value" id="val-escoamento">17.118</span>
+                <span class="metric-badge badge-positive" id="badge-escoamento">
+                    <i class="fa-solid fa-arrow-trend-up"></i> +7.57%
+                </span>
+            </div>
+            <div class="metric-comparison">
+                <span>Anterior (As-Is): <b id="asis-escoamento">15.913</b></span>
+                <span>Proposto (To-Be)</span>
+            </div>
+        </div>
+
+        <!-- Tempo de Viagem -->
+        <div class="metric-card negative">
+            <div class="metric-card-header">
+                <span class="metric-label">Tempo de Viagem Médio</span>
+                <i class="fa-solid fa-hourglass-half metric-icon"></i>
+            </div>
+            <div class="metric-value-row">
+                <span class="metric-value" id="val-viagem">436.4s</span>
+                <span class="metric-badge badge-negative" id="badge-viagem">
+                    <i class="fa-solid fa-arrow-trend-down"></i> -37.97%
+                </span>
+            </div>
+            <div class="metric-comparison">
+                <span>Anterior (As-Is): <b id="asis-viagem">703.6s</b></span>
+                <span>Economia: <b id="gain-viagem">4.45 min</b></span>
+            </div>
+        </div>
+
+        <!-- Tempo em Filas -->
+        <div class="metric-card negative">
+            <div class="metric-card-header">
+                <span class="metric-label">Espera Média em Filas</span>
+                <i class="fa-solid fa-traffic-light metric-icon"></i>
+            </div>
+            <div class="metric-value-row">
+                <span class="metric-value" id="val-fila">53.1s</span>
+                <span class="metric-badge badge-negative" id="badge-fila">
+                    <i class="fa-solid fa-arrow-trend-down"></i> -83.11%
+                </span>
+            </div>
+            <div class="metric-comparison">
+                <span>Anterior (As-Is): <b id="asis-fila">314.7s</b></span>
+                <span>Economia: <b id="gain-fila">4.36 min</b></span>
+            </div>
+        </div>
+
+        <!-- Carbono Acumulado -->
+        <div class="metric-card negative">
+            <div class="metric-card-header">
+                <span class="metric-label">Redução de CO₂ Acumulada</span>
+                <i class="fa-solid fa-leaf metric-icon"></i>
+            </div>
+            <div class="metric-value-row">
+                <span class="metric-value" id="val-co2">-9.85 t</span>
+                <span class="metric-badge badge-negative" id="badge-co2">
+                    <i class="fa-solid fa-arrow-trend-down"></i> -27.60%
+                </span>
+            </div>
+            <div class="metric-comparison">
+                <span>Anterior (As-Is): <b id="asis-co2">35.68 t</b></span>
+                <span>To-Be: <b id="tobe-co2">25.83 t</b></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Gráficos -->
+    <div class="charts-row">
+        <!-- Gráfico Tempo -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title">Atrasos de Tráfego</h3>
+                    <span class="chart-subtitle">Comparativo de tempo de viagem e tempo parado em cruzamentos</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart-tempos"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico Ambiental -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title">Consumo & Pegada Ecológica</h3>
+                    <span class="chart-subtitle">Redução de consumo de combustível e emissões totais de CO₂</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart-ambiental"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção Interativa - Calculadora e Detalhes de Código -->
+    <div class="calculator-row">
+        <!-- Calculadora de Marcha Lenta -->
+        <div class="interactive-card">
+            <div class="calc-header">
+                <h3 class="calc-title"><i class="fa-solid fa-calculator"></i> Calculadora Estequiométrica em Tempo Real</h3>
+                <p class="calc-desc">Calcule a emissão de CO₂ poupada ao retirar veículos da marcha lenta (idle). Ajuste as variáveis para simular diferentes demandas.</p>
+            </div>
+            
+            <div class="calc-inputs">
+                <!-- N -->
+                <div class="input-group">
+                    <div class="input-label">
+                        <span>Veículos Escoados (N)</span>
+                        <span class="value" id="calc-val-n">19.191</span>
+                    </div>
+                    <input type="range" class="slider" min="1000" max="30000" step="500" value="19191" id="slider-n" oninput="calculateCO2()">
+                </div>
+                <!-- dt -->
+                <div class="input-group">
+                    <div class="input-label">
+                        <span>Tempo Parado Poupado (Δt)</span>
+                        <span class="value" id="calc-val-t">4.91 min</span>
+                    </div>
+                    <input type="range" class="slider" min="0.5" max="10.0" step="0.1" value="4.91" id="slider-t" oninput="calculateCO2()">
+                </div>
+                <!-- Fator -->
+                <div class="input-group">
+                    <div class="input-label">
+                        <span>Fator Emissão Marcha Lenta (g/min)</span>
+                        <span class="value" id="calc-val-f">3.12 g/min</span>
+                    </div>
+                    <input type="range" class="slider" min="1.0" max="8.0" step="0.1" value="3.12" id="slider-f" oninput="calculateCO2()">
+                </div>
+            </div>
+
+            <div class="calc-result-box">
+                <div class="calc-result-lbl">CO₂ Poupar Total (Evitado)</div>
+                <div class="calc-result-value" id="calc-result">293.7 kg</div>
+                <div class="calc-result-equivalent" id="calc-equivalent">Equivale ao plantio de 2.06 árvores adultas para compensação rápida.</div>
+            </div>
+        </div>
+
+        <!-- Métricas Físicas e Engenharia -->
+        <div class="interactive-card" style="justify-content: space-between;">
+            <div class="calc-header">
+                <h3 class="calc-title" style="color: var(--text-primary);"><i class="fa-solid fa-microchip"></i> Lógica e Dimensionamento Físico</h3>
+                <p class="calc-desc">Principais decisões lógicas de dimensionamento adotadas pela equipe técnica nas simulações:</p>
+            </div>
+            
+            <div class="calc-inputs" style="gap: 1rem;">
+                <div style="border-left: 2px solid var(--color-emerald); padding-left: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                    <span style="font-weight: 600; font-size: 0.9rem; color: var(--color-emerald);">Dimensionamento de Sensores (Rafael):</span>
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Laços indutivos virtuais posicionados a <b>40 metros</b> de recuo da faixa de pedestres, calculados para reter filas máximas de até <b>7 automóveis médios</b> (7 x 5.5m ≈ 38.5m).</span>
+                </div>
+                
+                <div style="border-left: 2px solid #36a2eb; padding-left: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                    <span style="font-weight: 600; font-size: 0.9rem; color: #36a2eb;">Equação de Defasagem Onda Verde (Rafael):</span>
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Cálculo clássico de tempo de tráfego: <b>Offset = d / v</b>. Onde a distância d = 222m e velocidade v = 40 km/h (11,11 m/s), resultando no offset de <b>20,0 segundos</b>.</span>
+                </div>
+
+                <div style="border-left: 2px solid #ff9f40; padding-left: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                    <span style="font-weight: 600; font-size: 0.9rem; color: #ff9f40;">Parâmetros Semafóricos Atuados (Giovane):</span>
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Programação XML: <b>maxGap = 3.0s</b> (corte de verde na ausência de fluxo) e <b>detectorGap = 2.0s</b> (extensão de tempo dinâmico por veículo detectado).</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Ciências do Ambiente - UTFPR</p>
+    </footer>
+</div>
+
+<script>
+    // Dicionário de Dados Estatísticos Coletados
+    const statsData = {
+        manha: {
+            escoamento: { asis: 15913, tobe: 17118, pct: "+7.57%" },
+            viagem: { asis: 703.6, tobe: 436.4, pct: "-37.97%", gain: "4.45 min" },
+            fila: { asis: 314.7, tobe: 53.1, pct: "-83.11%", gain: "4.36 min" },
+            co2: { asis: 35.684, tobe: 25.834, pct: "-27.60%", saved: "-9.85 t" },
+            combustivel: { asis: 11.34, tobe: 8.21, pct: "-27.64%" }
+        },
+        tarde: {
+            escoamento: { asis: 16362, tobe: 19191, pct: "+17.29%" },
+            viagem: { asis: 754.3, tobe: 455.9, pct: "-39.56%", gain: "4.97 min" },
+            fila: { asis: 361.5, tobe: 67.2, pct: "-81.42%", gain: "4.91 min" },
+            co2: { asis: 39.162, tobe: 30.321, pct: "-22.57%", saved: "-8.84 t" },
+            combustivel: { asis: 12.45, tobe: 9.63, pct: "-22.61%" }
+        }
+    };
+
+    let activePeriod = 'manha';
+    let chartTempos = null;
+    let chartAmbiental = null;
+
+    // Inicialização
+    window.addEventListener('DOMContentLoaded', () => {
+        initCharts();
+        calculateCO2();
+    });
+
+    // Função de Switch de Abas
+    function switchPeriod(period) {
+        if (period === activePeriod) return;
+        activePeriod = period;
+
+        // Alterar Botões
+        document.getElementById('btn-manha').classList.toggle('active', period === 'manha');
+        document.getElementById('btn-tarde').classList.toggle('active', period === 'tarde');
+
+        const pData = statsData[period];
+
+        // Atualizar Textos
+        animateValue('val-escoamento', pData.escoamento.tobe);
+        document.getElementById('asis-escoamento').textContent = pData.escoamento.asis.toLocaleString('pt-BR');
+        updateBadge('badge-escoamento', pData.escoamento.pct, true);
+
+        document.getElementById('val-viagem').textContent = pData.viagem.tobe + 's';
+        document.getElementById('asis-viagem').textContent = pData.viagem.asis + 's';
+        document.getElementById('gain-viagem').textContent = pData.viagem.gain;
+        updateBadge('badge-viagem', pData.viagem.pct, false);
+
+        document.getElementById('val-fila').textContent = pData.fila.tobe + 's';
+        document.getElementById('asis-fila').textContent = pData.fila.asis + 's';
+        document.getElementById('gain-fila').textContent = pData.fila.gain;
+        updateBadge('badge-fila', pData.fila.pct, false);
+
+        document.getElementById('val-co2').textContent = pData.co2.saved;
+        document.getElementById('asis-co2').textContent = pData.co2.asis + ' t';
+        document.getElementById('tobe-co2').textContent = pData.co2.tobe + ' t';
+        updateBadge('badge-co2', pData.co2.pct, false);
+
+        // Atualizar Slider N com base no período
+        document.getElementById('slider-n').value = pData.escoamento.tobe;
+        document.getElementById('slider-t').value = parseFloat(pData.fila.gain.split(' ')[0]);
+        calculateCO2();
+
+        // Atualizar Gráficos
+        updateCharts();
+    }
+
+    // Atualizar Badges de Metricas
+    function updateBadge(id, text, isPositive) {
+        const badge = document.getElementById(id);
+        badge.innerHTML = (isPositive ? '<i class="fa-solid fa-arrow-trend-up"></i> ' : '<i class="fa-solid fa-arrow-trend-down"></i> ') + text;
+        badge.className = isPositive ? 'metric-badge badge-positive' : 'metric-badge badge-negative';
+    }
+
+    // Animação de Números
+    function animateValue(id, endVal) {
+        const obj = document.getElementById(id);
+        let startVal = parseInt(obj.textContent.replace(/\./g, '')) || 0;
+        let duration = 600;
+        let startTime = null;
+
+        function step(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            obj.textContent = Math.floor(progress * (endVal - startVal) + startVal).toLocaleString('pt-BR');
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        }
+        window.requestAnimationFrame(step);
+    }
+
+    // Inicialização dos Gráficos com Chart.js
+    function initCharts() {
+        // Chart Tempos
+        const ctxTempos = document.getElementById('chart-tempos').getContext('2d');
+        chartTempos = new Chart(ctxTempos, {
+            type: 'bar',
+            data: getChartTemposData(),
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: 'hsl(150, 10%, 94%)', font: { family: 'Inter' } }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: 'hsl(150, 8%, 70%)' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Segundos (s)', color: 'hsl(150, 8%, 70%)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: 'hsl(150, 8%, 70%)' }
+                    }
+                }
+            }
+        });
+
+        // Chart Ambiental
+        const ctxAmbiental = document.getElementById('chart-ambiental').getContext('2d');
+        chartAmbiental = new Chart(ctxAmbiental, {
+            type: 'bar',
+            data: getChartAmbientalData(),
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: 'hsl(150, 10%, 94%)', font: { family: 'Inter' } }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: 'hsl(150, 8%, 70%)' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Valores Totais', color: 'hsl(150, 8%, 70%)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: 'hsl(150, 8%, 70%)' }
+                    }
+                }
+            }
+        });
+    }
+
+    // Dados do Gráfico de Tempos
+    function getChartTemposData() {
+        const curData = statsData[activePeriod];
+        return {
+            labels: ['Tempo Médio de Viagem', 'Tempo em Fila (Espera)'],
+            datasets: [
+                {
+                    label: 'Cenário As-Is (Fixos)',
+                    data: [curData.viagem.asis, curData.fila.asis],
+                    backgroundColor: 'rgba(220, 53, 69, 0.65)',
+                    borderColor: 'hsl(0, 75%, 60%)',
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                },
+                {
+                    label: 'Cenário To-Be (Atuados)',
+                    data: [curData.viagem.tobe, curData.fila.tobe],
+                    backgroundColor: 'rgba(45, 106, 79, 0.65)',
+                    borderColor: 'hsl(143, 56%, 45%)',
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                }
+            ]
+        };
+    }
+
+    // Dados do Gráfico Ambiental
+    function getChartAmbientalData() {
+        const curData = statsData[activePeriod];
+        return {
+            labels: ['Consumo Combustível (M L)', 'Emissões de CO₂ (t)'],
+            datasets: [
+                {
+                    label: 'Cenário As-Is (Fixos)',
+                    data: [curData.combustivel.asis, curData.co2.asis],
+                    backgroundColor: 'rgba(108, 117, 125, 0.65)',
+                    borderColor: 'hsl(150, 6%, 50%)',
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                },
+                {
+                    label: 'Cenário To-Be (Atuados)',
+                    data: [curData.combustivel.tobe, curData.co2.tobe],
+                    backgroundColor: 'rgba(45, 106, 79, 0.85)',
+                    borderColor: 'hsl(143, 56%, 55%)',
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                }
+            ]
+        };
+    }
+
+    // Atualização de Gráficos
+    function updateCharts() {
+        chartTempos.data = getChartTemposData();
+        chartTempos.update();
+
+        chartAmbiental.data = getChartAmbientalData();
+        chartAmbiental.update();
+    }
+
+    // Calculadora Interativa Estequiométrica
+    function calculateCO2() {
+        const nVal = parseInt(document.getElementById('slider-n').value);
+        const tVal = parseFloat(document.getElementById('slider-t').value);
+        const fVal = parseFloat(document.getElementById('slider-f').value);
+
+        // Atualizar Labels
+        document.getElementById('calc-val-n').textContent = nVal.toLocaleString('pt-BR');
+        document.getElementById('calc-val-t').textContent = tVal.toFixed(2) + ' min';
+        document.getElementById('calc-val-f').textContent = fVal.toFixed(2) + ' g/min';
+
+        // Equação: Emissão = N * dt * Fator
+        const co2EvitadoG = nVal * tVal * fVal;
+        const co2EvitadoKg = co2EvitadoG / 1000;
+
+        // Equivalente em Árvores (Uma árvore absorve ~14.3 kg de CO2 por ano, ou ~0.04 kg por dia. 
+        // Vamos considerar compensação rápida anual de 143kg por árvore em 10 anos)
+        const arvores = co2EvitadoKg / 14.3;
+
+        // Atualizar Resultados
+        document.getElementById('calc-result').textContent = co2EvitadoKg.toFixed(1) + ' kg';
+        document.getElementById('calc-equivalent').textContent = `Equivale ao plantio de ${arvores.toFixed(2)} árvores adultas para compensação das emissões anuais.`;
+    }
+</script>
+
+</body>
+</html>

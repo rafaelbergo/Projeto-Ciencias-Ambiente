@@ -1,0 +1,18 @@
+<configuration>
+    <input>
+        <net-file value="curitiba_tobe.net.xml"/>
+        <route-files value="demanda_manha.rou.xml"/>
+    </input>
+    <output>
+        <tripinfo-output value="outputs/tripinfo_tobe_manha.xml"/>
+        <summary-output value="outputs/summary_tobe_manha.xml"/>
+    </output>
+    <time>
+        <begin value="0"/>
+        <end value="9000"/>
+    </time>
+    <report>
+        <no-step-log value="true"/>
+        <no-warnings value="true"/>
+    </report>
+</configuration>
